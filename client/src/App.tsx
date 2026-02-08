@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState } from "react"
+import "./global.css"
+import axios from "axios"; 
 
 async function getCameraStream() {
   return await navigator.mediaDevices.getUserMedia({ video: true })
@@ -7,6 +9,10 @@ async function getCameraStream() {
 function App() {
   const [cameraStarted, setCameraStarted] = useState(false)
   const [cameraStop, setcameraStop] = useState(true)
+  const [url, setUrl] = useState<string >()
+  const [blob, setBlob] = useState<Blob>()
+  const [videoUrl, setVideoUrl] = useState()
+  const [alertUrl , setAlertUrl ]= useState(false)
   // later i have to make this two tracks to one isCameraStart , so it can handle both case 
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -42,7 +48,7 @@ function App() {
     if (videoRef.current ) 
     videoRef.current.srcObject = null; 
   }
-  const RecordCamera = () => {
+  const startRecording = () => {
     if (!streamRef.current) return; 
     if (recordRef.current) return; 
 
@@ -66,17 +72,70 @@ function App() {
       record.stop()
     } , 60000)
   }
- 
+  const stopRecording = () => {
+    
+    if (!recordRef.current) return;
+    const record = recordRef.current
+    record.stop();
+    record.onstop = () => {
+      const blob = new Blob(chunkRef.current, { type: "video/webm" })
+      console.log ("type of blob is "  , typeof blob)
+      setBlob(blob)
+      const newUrl = URL.createObjectURL(blob)
+      setUrl(newUrl)
+      console.log("Recorded video blob:", blob)
+      recordRef.current = null;     
+    }
+  }
+
+  const uploadVideo = async () => {
+  const formData = new FormData();
+  formData.append("video", blob, "recording.webm");
+
+  try {
+    const resp = await axios.post("http://localhost:5000/upload", formData);
+
+    const { shareUrl } = resp.data;
+    if (shareUrl) {
+      setAlertUrl(true)
+    }
+
+
+    console.log("Share URL:", shareUrl);
+
+    setVideoUrl(shareUrl);      
+  } catch (e) {
+    console.log("error in upload", e);
+  }
+};
+
 
   return (
-      <>  
-        <video ref={videoRef} autoPlay playsInline height={500} width={200}/>
-      {!cameraStarted && <button onClick={startCamera}>start Camera </button>}
-      {!cameraStop && 
-      <><button onClick={RecordCamera}>Record Video</button>   
-      <button onClick={stopCamera}>stop Camera</button></>
-      }
-      </>
+      <div className="app">
+  <video ref={videoRef} autoPlay playsInline height={500} width={200} />
+
+  {!cameraStarted && (
+    <div className="controls">
+      <button onClick={startCamera}>Start Camera</button>
+    </div>
+  )}
+
+  {!cameraStop && (
+    <div className="controls">
+      <button onClick={startRecording}>Record Video</button>
+      <button className="stop" onClick={stopRecording}>Stop Recording</button>
+      {url && <video controls autoPlay src={url} />}
+          <button className="stop" onClick={stopCamera}>Stop Camera</button>
+          <button onClick={uploadVideo}>upload</button>
+          {videoUrl && <div className="urlContainer">
+            <p>{videoUrl}</p>
+            <button onClick={() => navigator.clipboard.writeText(videoUrl)}>
+              Copy Share Link
+            </button>
+          </div>}
+    </div>
+  )}
+      </div>
   )
 }
 

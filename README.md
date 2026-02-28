@@ -1,12 +1,12 @@
 
-# 📹 Real-Time Video Call Application
+#  Real-Time Video Call Application
 
 A peer-to-peer video calling web application built using **Node.js**, **React.js**, **WebRTC**, and **WebSockets**.
 This project enables real-time video, audio, and data communication similar to WhatsApp video calling.
 
 ---
 
-## 🚀 Features
+##  Features
 
 * 🔹 Peer-to-peer video and audio calling (WebRTC)
 * 🔹 Real-time signaling using WebSockets
@@ -18,7 +18,7 @@ This project enables real-time video, audio, and data communication similar to W
 
 ---
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
 ### Frontend
 
@@ -34,7 +34,7 @@ This project enables real-time video, audio, and data communication similar to W
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 
 1. **User joins a room**
 2. A WebSocket connection is established with the server.
@@ -103,7 +103,7 @@ http://localhost:5000
 
 ---
 
-## 🔐 WebRTC Signaling Flow
+##  WebRTC Signaling Flow
 
 1. Caller creates an **offer**
 2. Offer sent via WebSocket to server
@@ -125,7 +125,7 @@ http://localhost:5000
 
 ---
 
-## 🧩 Challenges Solved
+##  Challenges Solved
 
 * Managing WebRTC signaling
 * Handling ICE candidate exchange
@@ -135,7 +135,7 @@ http://localhost:5000
 
 ---
 
-## 📌 Learning Outcomes
+##  Learning Outcomes
 
 * Deep understanding of WebRTC internals
 * Practical real-time communication architecture
@@ -144,7 +144,7 @@ http://localhost:5000
 
 ---
 
-## 📜 License
+##  License
 
 This project is for educational purposes.
 
